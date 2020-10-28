@@ -1,20 +1,14 @@
 package be.ugent.rml;
 
 import be.ugent.rml.cli.Main;
-import org.junit.Test;
-import org.rdfhdt.hdt.hdt.HDT;
-import org.rdfhdt.hdt.hdt.HDTManager;
-import org.rdfhdt.hdt.triples.*;
-
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class Arguments_Test extends TestCore {
 
@@ -262,42 +256,6 @@ public class Arguments_Test extends TestCore {
             e.printStackTrace();
         }
     }
-
-    @Test
-    public void outputHDT() throws IOException {
-        String cwd = (new File( "./src/test/resources/argument")).getAbsolutePath();
-        String mappingFilePath = (new File("./src/test/resources/argument/mapping.ttl")).getAbsolutePath();
-        String actualHDTPath = (new File("./generated_output.hdt")).getAbsolutePath();
-        String expectedHDTPath = (new File( "./src/test/resources/argument/output-hdt/target_output.hdt")).getAbsolutePath();
-
-        Main.main(("-m " + mappingFilePath + " -o " + actualHDTPath + " -s hdt").split(" "), cwd);
-
-        // Load HDT file.
-        HDT hdt1 = HDTManager.loadHDT(expectedHDTPath, null);
-        HDT hdt2 = HDTManager.loadHDT(actualHDTPath, null);
-
-        try {
-            Triples triples1 = hdt1.getTriples();
-            Triples triples2 = hdt2.getTriples();
-
-            assertEquals(triples1.size(), triples2.size());
-
-            IteratorTripleID iteratorTripleID1 = triples1.searchAll();
-            IteratorTripleID iteratorTripleID2 = triples2.searchAll();
-
-            while(iteratorTripleID1.hasNext()) {
-                TripleID tripleID1 = iteratorTripleID1.next();
-                TripleID tripleID2 = iteratorTripleID2.next();
-
-                assertTrue(tripleID1.equals(tripleID2));
-            }
-        } finally {
-            hdt1.close();
-            hdt2.close();
-            assertTrue((new File(actualHDTPath)).delete());
-        }
-    }
-
 
     @Test
     public void quoteInLiteral() throws Exception {

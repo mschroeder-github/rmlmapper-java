@@ -10,15 +10,6 @@ import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
 import com.google.common.escape.Escaper;
 import com.google.common.net.UrlEscapers;
-import org.apache.commons.io.IOUtils;
-import org.eclipse.rdf4j.common.net.ParsedIRI;
-import org.rdfhdt.hdt.enums.RDFNotation;
-import org.rdfhdt.hdt.hdt.HDT;
-import org.rdfhdt.hdt.hdt.HDTManager;
-import org.rdfhdt.hdt.options.HDTSpecification;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
@@ -36,6 +27,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.apache.commons.io.IOUtils;
+import org.eclipse.rdf4j.common.net.ParsedIRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * General static utility functions
@@ -434,6 +429,7 @@ public class Utils {
         return Integer.toString(Math.abs(hash));
     }
 
+    /*
     public static void ntriples2hdt(String rdfInputPath, String hdtOutputPath) {
         // Configuration variables
         String baseURI = "http://example.com/mydataset";
@@ -450,7 +446,8 @@ public class Utils {
             e.printStackTrace();
         }
     }
-
+    */
+    
     /**
      * This method returns true if a string is valid IRI.
      *

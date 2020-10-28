@@ -2,7 +2,6 @@ package be.ugent.rml.cli;
 
 import be.ugent.rml.Executor;
 import be.ugent.rml.Utils;
-import be.ugent.rml.access.DatabaseType;
 import be.ugent.rml.conformer.MappingConformer;
 import be.ugent.rml.functions.FunctionLoader;
 import be.ugent.rml.functions.lib.IDLabFunctions;
@@ -362,8 +361,11 @@ public class Main {
                 String uncompressedOutputFile = tmpFile.getAbsolutePath();
 
                 File nquadsFile = writeOutputUncompressed(store, uncompressedOutputFile, format);
-                Utils.ntriples2hdt(uncompressedOutputFile, outputFile);
-                nquadsFile.deleteOnExit();
+                
+                throw new RuntimeException("hdt not supported");
+                
+                //Utils.ntriples2hdt(uncompressedOutputFile, outputFile);
+                //nquadsFile.deleteOnExit();
             } catch (IOException e) {
                 e.printStackTrace();
             }

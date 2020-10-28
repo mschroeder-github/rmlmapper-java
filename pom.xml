@@ -215,11 +215,11 @@
             <artifactId>jena-fuseki-embedded</artifactId>
             <version>3.8.0</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>com.github.bjdmeest</groupId>
             <artifactId>hdt-java</artifactId>
             <version>hdt-2.2-SNAPSHOT</version>
-        </dependency>
+        </dependency-->
         <!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
         <dependency>
             <groupId>commons-validator</groupId>
@@ -321,7 +321,7 @@
                     </items>
                 </configuration>
             </plugin>
-            <plugin>
+            <!--plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.7</version>
@@ -331,7 +331,7 @@
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
-            </plugin>
+            </plugin-->
         </plugins>
     </build>
 </project>
