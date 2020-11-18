@@ -36,6 +36,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.12</junit.version>
+        <poi.ooxml.version>4.0.0</poi.ooxml.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
@@ -230,6 +231,14 @@
             <groupId>com.github.fnoio</groupId>
             <artifactId>grel-functions-java</artifactId>
             <version>v0.5.2</version>
+        </dependency>
+        
+        
+        <!-- reading excel spreadsheets -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.ooxml.version}</version>
         </dependency>
     </dependencies>
 
