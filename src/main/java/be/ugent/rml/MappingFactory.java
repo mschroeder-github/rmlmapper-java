@@ -1,5 +1,6 @@
 package be.ugent.rml;
 
+import static be.ugent.rml.Utils.isValidrrLanguage;
 import be.ugent.rml.extractor.ConstantExtractor;
 import be.ugent.rml.extractor.ReferenceExtractor;
 import be.ugent.rml.functions.*;
@@ -8,20 +9,18 @@ import be.ugent.rml.term.Literal;
 import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
 import be.ugent.rml.termgenerator.BlankNodeGenerator;
+import be.ugent.rml.termgenerator.GraphGenerator;
 import be.ugent.rml.termgenerator.LiteralGenerator;
 import be.ugent.rml.termgenerator.NamedNodeGenerator;
 import be.ugent.rml.termgenerator.TermGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-
-import static be.ugent.rml.Utils.isValidrrLanguage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MappingFactory {
     private final FunctionLoader functionLoader;
@@ -285,6 +284,11 @@ public class MappingFactory {
                 } else {
                     gen = new LiteralGenerator(functionExecutor);
                 }
+                
+            } else if(termType.equals(new NamedNode(NAMESPACES.RML + "Graph"))) {
+                //new Graph termType
+                gen = new GraphGenerator(functionExecutor, functionLoader.getResultingQuads());
+                
             } else {
                 gen = new NamedNodeGenerator(functionExecutor);
             }

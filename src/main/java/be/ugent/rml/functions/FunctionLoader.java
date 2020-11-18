@@ -1,17 +1,13 @@
 package be.ugent.rml.functions;
 
 import be.ugent.rml.NAMESPACES;
+import be.ugent.rml.Utils;
 import be.ugent.rml.functions.lib.IDLabFunctions;
+import be.ugent.rml.functions.lib.UtilFunctions;
+import be.ugent.rml.store.QuadStore;
 import be.ugent.rml.store.RDF4JStore;
 import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
-import be.ugent.rml.Utils;
-import be.ugent.rml.functions.lib.UtilFunctions;
-import be.ugent.rml.store.QuadStore;
-import org.eclipse.rdf4j.rio.RDFFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -19,12 +15,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FunctionLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(FunctionLoader.class);
 
     private final QuadStore functionDescriptionTriples;
+    
+    //a reference to the resulting Quads to give the 
+    //be.ugent.rml.termgenerator.GraphGenerator access to
+    //the resulting quads. This way we can add quads from the graph
+    //to the final result.
+    private QuadStore resultingQuads;
 
     // updated dynamically
     /**
@@ -223,4 +228,13 @@ public class FunctionLoader {
 
         this.loadedMethods.put(iri, fnm);
     }
+
+    public QuadStore getResultingQuads() {
+        return resultingQuads;
+    }
+
+    public void setResultingQuads(QuadStore resultingQuads) {
+        this.resultingQuads = resultingQuads;
+    }
+    
 }
