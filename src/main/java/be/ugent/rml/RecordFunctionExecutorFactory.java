@@ -1,13 +1,15 @@
 package be.ugent.rml;
 
 import be.ugent.rml.extractor.ConstantExtractor;
+import be.ugent.rml.extractor.RdfListExtractor;
 import be.ugent.rml.extractor.ReferenceExtractor;
 import be.ugent.rml.functions.ConcatFunction;
 import be.ugent.rml.functions.SingleRecordFunctionExecutor;
+import be.ugent.rml.store.Quad;
 import be.ugent.rml.store.QuadStore;
+import be.ugent.rml.term.Literal;
 import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
-
 import java.util.List;
 
 public class RecordFunctionExecutorFactory {
@@ -22,9 +24,23 @@ public class RecordFunctionExecutorFactory {
         } else if (!templates.isEmpty()) {
             return new ConcatFunction(Utils.parseTemplate(templates.get(0).getValue(), ignoreDoubleQuotes), encodeURI);
         } else if (!constants.isEmpty()) {
-            return new ConstantExtractor(constants.get(0).getValue());
+            if(isRdfList(constants.get(0), store)) {
+                return new RdfListExtractor(constants.get(0), store);
+            } else {
+                return new ConstantExtractor(constants.get(0).getValue());
+            }
         } else {
             return null;
         }
+    }
+    
+    private static boolean isRdfList(Term term, QuadStore store) {
+        if(!(term instanceof Literal)) {
+            List<Quad> firstQuads = store.getQuads(term, new NamedNode(NAMESPACES.RDF + "first"), null);
+            if(!firstQuads.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

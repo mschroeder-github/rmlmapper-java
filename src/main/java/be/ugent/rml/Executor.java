@@ -6,19 +6,19 @@ import be.ugent.rml.metadata.Metadata;
 import be.ugent.rml.metadata.MetadataGenerator;
 import be.ugent.rml.records.Record;
 import be.ugent.rml.records.RecordsFactory;
-import be.ugent.rml.store.SimpleQuadStore;
-import be.ugent.rml.term.ProvenancedQuad;
+import be.ugent.rml.store.Quad;
 import be.ugent.rml.store.QuadStore;
+import be.ugent.rml.store.SimpleQuadStore;
 import be.ugent.rml.term.NamedNode;
+import be.ugent.rml.term.ProvenancedQuad;
 import be.ugent.rml.term.ProvenancedTerm;
 import be.ugent.rml.term.Term;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.BiConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Executor {
 
@@ -45,6 +45,16 @@ public class Executor {
     }
 
     public Executor(QuadStore rmlStore, RecordsFactory recordsFactory, FunctionLoader functionLoader, QuadStore resultingQuads, String baseIRI) throws Exception {
+        if (resultingQuads == null) {
+            this.resultingQuads = new SimpleQuadStore();
+        } else {
+            this.resultingQuads = resultingQuads;
+        }
+        
+        //this way be.ugent.rml.termgenerator.GraphGenerator is able to
+        //add quads on its own
+        functionLoader.setResultingQuads(resultingQuads);
+        
         this.initializer = new Initializer(rmlStore, functionLoader);
         this.mappings = this.initializer.getMappings();
         this.rmlStore = rmlStore;
@@ -52,12 +62,6 @@ public class Executor {
         this.baseIRI = baseIRI;
         this.recordsHolders = new HashMap<Term, List<Record>>();
         this.subjectCache = new HashMap<Term, HashMap<Integer, ProvenancedTerm>>();
-
-        if (resultingQuads == null) {
-            this.resultingQuads = new SimpleQuadStore();
-        } else {
-            this.resultingQuads = resultingQuads;
-        }
     }
 
     public QuadStore execute(List<Term> triplesMaps, boolean removeDuplicates, MetadataGenerator metadataGenerator) throws Exception {
@@ -189,6 +193,18 @@ public class Executor {
                 predicates.add(new ProvenancedTerm(p, pogMapping.getPredicateMappingInfo()));
             });
 
+            //this boolean decides if the predicates and objects will be
+            //if false) combined with the cross product (p1 o1) (p1 o2) (p2 o1) (p2 o2)
+            //if true) combined with a zip (p1 o1) (p2 o2)
+            boolean zip = false;
+            List<Quad> poMapTerms = rmlStore.getQuads(null, null, pogMapping.getPredicateMappingInfo().getTerm());
+            if(!poMapTerms.isEmpty()) {
+                List<Quad> zipQuads = rmlStore.getQuads(poMapTerms.get(0).getSubject(), new NamedNode(NAMESPACES.RML + "zip"), null);
+                if(!zipQuads.isEmpty()) {
+                    zip = zipQuads.get(0).getObject().getValue().equals("true");
+                }
+            }
+            
             if (pogMapping.getObjectMappingInfo() != null && pogMapping.getObjectMappingInfo().getTermGenerator() != null) {
                 List<Term> objects = pogMapping.getObjectMappingInfo().getTermGenerator().generate(record);
                 ArrayList<ProvenancedTerm> provenancedObjects = new ArrayList<>();
@@ -198,8 +214,12 @@ public class Executor {
                 });
 
                 if (objects.size() > 0) {
-                    //add pogs
-                    results.addAll(combineMultiplePOGs(predicates, provenancedObjects, poGraphs));
+                    if(zip) {
+                        results.addAll(combineMultiplePOGsZip(predicates, provenancedObjects, poGraphs));
+                    } else {
+                        //add pogs
+                        results.addAll(combineMultiplePOGs(predicates, provenancedObjects, poGraphs));
+                    }
                 }
 
                 //check if we are dealing with a parentTriplesMap (RefObjMap)
@@ -214,7 +234,11 @@ public class Executor {
                     objects = this.getAllIRIs(pogMapping.getParentTriplesMap());
                 }
 
-                results.addAll(combineMultiplePOGs(predicates, objects, poGraphs));
+                if(zip) {
+                    results.addAll(combineMultiplePOGsZip(predicates, objects, poGraphs));
+                } else {
+                    results.addAll(combineMultiplePOGs(predicates, objects, poGraphs));
+                }
             }
         }
 
@@ -335,6 +359,7 @@ public class Executor {
         return this.initializer.getFunctionLoader();
     }
 
+    //this is the cross product of predicates and objects
     private List<PredicateObjectGraph> combineMultiplePOGs(List<ProvenancedTerm> predicates, List<ProvenancedTerm> objects, List<ProvenancedTerm> graphs) {
         ArrayList<PredicateObjectGraph> results = new ArrayList<>();
 
@@ -349,6 +374,31 @@ public class Executor {
                 });
             });
         });
+
+        return results;
+    }
+    
+    //zips predicates and objects instead of cross product
+    //e.g. p1 p2  o1 o2 results in (p1,o1), (p2,o2)
+    private List<PredicateObjectGraph> combineMultiplePOGsZip(List<ProvenancedTerm> predicates, List<ProvenancedTerm> objects, List<ProvenancedTerm> graphs) {
+        ArrayList<PredicateObjectGraph> results = new ArrayList<>();
+
+        if (graphs.isEmpty()) {
+            graphs.add(null);
+        }
+
+        int min = Integer.min(predicates.size(), objects.size());
+        
+        for(int i = 0; i < min; i++) {
+            
+            //zip
+            ProvenancedTerm p = predicates.get(i);
+            ProvenancedTerm o = objects.get(i);
+            
+            graphs.forEach(g -> {
+                results.add(new PredicateObjectGraph(p, o, g));
+            });
+        }
 
         return results;
     }
