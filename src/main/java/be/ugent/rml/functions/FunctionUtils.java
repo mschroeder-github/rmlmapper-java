@@ -6,11 +6,6 @@ import be.ugent.rml.store.Quad;
 import be.ugent.rml.store.QuadStore;
 import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,6 +15,10 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.tools.JavaCompiler;
+import javax.tools.ToolProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FunctionUtils {
 
@@ -140,6 +139,8 @@ public class FunctionUtils {
                 return Double.class;
             case "http://www.w3.org/1999/02/22-rdf-syntax-ns#List":
                 return List.class;
+            case "http://www.w3.org/2001/XMLSchema#boolean":
+                return Boolean.class;
             default:
                 throw new Error("Couldn't derive type from " + type);
         }

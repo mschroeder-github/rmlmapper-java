@@ -1,14 +1,6 @@
 package be.ugent.rml.functions;
 
 import be.ugent.rml.term.Term;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.Value;
-import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.*;
@@ -16,6 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Function Model
@@ -166,6 +165,9 @@ public class FunctionModel {
         switch (type.getName()) {
             case "java.lang.String":
                 return parameter.toString();
+            case "boolean":
+            case "java.lang.Boolean":
+                return Boolean.parseBoolean(parameter.toString());
             case "int":
             case "java.lang.Integer":
                 return Integer.parseInt(parameter.toString());
