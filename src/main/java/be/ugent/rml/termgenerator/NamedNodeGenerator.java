@@ -5,8 +5,6 @@ import be.ugent.rml.functions.SingleRecordFunctionExecutor;
 import be.ugent.rml.records.Record;
 import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,13 +12,22 @@ public class NamedNodeGenerator extends TermGenerator {
 
     public NamedNodeGenerator(SingleRecordFunctionExecutor functionExecutor) {
         super(functionExecutor);
+        //Assert.notNull(functionExecutor, "functionExecutor is null");
     }
 
     @Override
     public List<Term> generate(Record record) throws Exception {
+        
+        
         List<String> objectStrings = new ArrayList<>();
-        FunctionUtils.functionObjectToList(functionExecutor.execute(record), objectStrings);
         ArrayList<Term> objects = new ArrayList<>();
+        
+        //if null then empty
+        if(functionExecutor == null) {
+            return objects;
+        }
+        
+        FunctionUtils.functionObjectToList(functionExecutor.execute(record), objectStrings);
 
         if (objectStrings.size() > 0) {
             for (String object : objectStrings) {
