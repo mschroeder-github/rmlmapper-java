@@ -48,8 +48,8 @@ public class GraphGenerator extends TermGenerator {
             QuadStore qs = new RDF4JStore();
             qs.read(IOUtils.toInputStream(objStr, StandardCharsets.UTF_8), null, RDFFormat.TURTLE);
             
-            //a special resource (may be BlankNode) of type rml:SelectedObjects that points to the returning terms
-            for(Quad selectedObjects : qs.getQuads(null, new NamedNode(NAMESPACES.RDF + "type"), new NamedNode(NAMESPACES.RML + "SelectedObjects"))) {
+            //a special resource (may be BlankNode) of type ss:SelectedObjects that points to the returning terms
+            for(Quad selectedObjects : qs.getQuads(null, new NamedNode(NAMESPACES.RDF + "type"), new NamedNode(NAMESPACES.SS + "SelectedObjects"))) {
                 //we reuse rr:object here
                 for(Quad termQuad : qs.getQuads(selectedObjects.getSubject(), new NamedNode(NAMESPACES.RR + "object"), null)) {
                     
