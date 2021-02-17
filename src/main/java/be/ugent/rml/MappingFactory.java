@@ -285,7 +285,7 @@ public class MappingFactory {
                     gen = new LiteralGenerator(functionExecutor);
                 }
                 
-            } else if(termType.equals(new NamedNode(NAMESPACES.RML + "Graph"))) {
+            } else if(termType.equals(new NamedNode(NAMESPACES.SS + "Graph"))) {
                 //new Graph termType
                 gen = new GraphGenerator(functionExecutor, functionLoader.getResultingQuads());
                 

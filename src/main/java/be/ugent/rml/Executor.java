@@ -199,7 +199,7 @@ public class Executor {
             boolean zip = false;
             List<Quad> poMapTerms = rmlStore.getQuads(null, null, pogMapping.getPredicateMappingInfo().getTerm());
             if(!poMapTerms.isEmpty()) {
-                List<Quad> zipQuads = rmlStore.getQuads(poMapTerms.get(0).getSubject(), new NamedNode(NAMESPACES.RML + "zip"), null);
+                List<Quad> zipQuads = rmlStore.getQuads(poMapTerms.get(0).getSubject(), new NamedNode(NAMESPACES.SS + "zip"), null);
                 if(!zipQuads.isEmpty()) {
                     zip = zipQuads.get(0).getObject().getValue().equals("true");
                 }
