@@ -32,7 +32,7 @@ public class RecordsFactory {
         referenceFormulationRecordFactoryMap.put(NAMESPACES.QL + "XPath", new XMLRecordFactory());
         referenceFormulationRecordFactoryMap.put(NAMESPACES.QL + "JSONPath", new JSONRecordFactory());
         referenceFormulationRecordFactoryMap.put(NAMESPACES.QL + "CSV", new CSVRecordFactory());
-        referenceFormulationRecordFactoryMap.put(NAMESPACES.QL + "Excel", new ExcelRecordFactory());
+        referenceFormulationRecordFactoryMap.put(NAMESPACES.QL + "Spreadsheet", new ExcelRecordFactory());
     }
 
     /**
@@ -135,9 +135,13 @@ public class RecordsFactory {
                 ReferenceFormulationRecordFactory factory = referenceFormulationRecordFactoryMap.get(referenceFormulation);
                 records = factory.getRecords(access, logicalSource, rmlStore);
 
-                // Store the records in the cache for later.
-                putRecordsIntoCache(access, referenceFormulation, logicalSourceHash, records);
-
+                boolean skipCache = factory instanceof ExcelRecordFactory;
+                    
+                if(!skipCache) {
+                    // Store the records in the cache for later.
+                    putRecordsIntoCache(access, referenceFormulation, logicalSourceHash, records);
+                }
+                
                 return records;
             } catch (IOException e) {
                 throw e;
@@ -157,6 +161,20 @@ public class RecordsFactory {
         List<Quad> quads = rmlStore.getQuads(logicalSource, null, null);
         final String[] hash = {""};
 
+        /*
+        try {
+            Quad refFormulation = rmlStore.getQuad(logicalSource, new NamedNode(NAMESPACES.RML + "referenceFormulation"), null);
+            if(refFormulation != null) {
+                if(refFormulation.getObject().getValue().equals(NAMESPACES.QL + "Excel")) {
+                    //source is the hash
+                    return rmlStore.getQuad(logicalSource, new NamedNode(NAMESPACES.RML + "source"), null).getObject().getValue();
+                }
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        */
+        
         quads.forEach(quad -> {
             if (!quad.getPredicate().getValue().equals(NAMESPACES.RML + "source")
                     && !quad.getPredicate().getValue().equals(NAMESPACES.RML + "referenceFormulation") ) {

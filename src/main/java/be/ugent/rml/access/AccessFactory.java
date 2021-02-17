@@ -2,16 +2,14 @@ package be.ugent.rml.access;
 
 import be.ugent.rml.NAMESPACES;
 import be.ugent.rml.Utils;
+import static be.ugent.rml.Utils.isRemoteFile;
 import be.ugent.rml.records.SPARQLResultFormat;
 import be.ugent.rml.store.QuadStore;
 import be.ugent.rml.term.Literal;
 import be.ugent.rml.term.NamedNode;
 import be.ugent.rml.term.Term;
-import org.apache.commons.lang.NotImplementedException;
-
 import java.util.List;
-
-import static be.ugent.rml.Utils.isRemoteFile;
+import org.apache.commons.lang.NotImplementedException;
 
 /**
  * This class creates Access instances.
@@ -104,6 +102,23 @@ public class AccessFactory {
                         }
 
                         break;
+                    case NAMESPACES.SS + "Workbook": //Spreadsheet
+                        List<Term> spreadsheetUrls = Utils.getObjectsFromQuads(rmlStore.getQuads(source, new NamedNode(NAMESPACES.SS + "url"), null));
+                        
+                        if (spreadsheetUrls.isEmpty()) {
+                            throw new Error("No url found for the Workbook");
+                        }
+                        
+                        String val = spreadsheetUrls.get(0).getValue();
+
+                        if (isRemoteFile(val)) {
+                            access = new RemoteFileAccess(val);
+                        } else {
+                            access = new LocalFileAccess(val, this.basePath);
+                        }
+                        break;
+                
+                        
                     default:
                         throw new NotImplementedException();
                 }
