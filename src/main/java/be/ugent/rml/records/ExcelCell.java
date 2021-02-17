@@ -35,11 +35,11 @@ public class ExcelCell {
     private String borderBottom;
     
     private String cellType;
-    private String cellTypeFormular;
+    private String cellTypeFormula;
     
     private double valueNumeric;
     private boolean valueBoolean;
-    private String valueFormular;
+    private String valueFormula;
     private int valueError;
     private String valueString;
     private String valueRichText;
@@ -204,12 +204,12 @@ public class ExcelCell {
         this.cellType = cellType;
     }
 
-    public String getCellTypeFormular() {
-        return cellTypeFormular;
+    public String getCellTypeFormula() {
+        return cellTypeFormula;
     }
 
-    public void setCellTypeFormular(String cellTypeFormular) {
-        this.cellTypeFormular = cellTypeFormular;
+    public void setCellTypeFormula(String cellTypeFormula) {
+        this.cellTypeFormula = cellTypeFormula;
     }
 
     public double getValueNumeric() {
@@ -228,12 +228,12 @@ public class ExcelCell {
         this.valueBoolean = valueBoolean;
     }
 
-    public String getValueFormular() {
-        return valueFormular;
+    public String getValueFormula() {
+        return valueFormula;
     }
 
-    public void setValueFormular(String valueFormular) {
-        this.valueFormular = valueFormular;
+    public void setValueFormula(String valueFormula) {
+        this.valueFormula = valueFormula;
     }
 
     public int getValueError() {
@@ -270,8 +270,8 @@ public class ExcelCell {
             }
         } else if(cellType.equals("boolean")) {
             return String.valueOf(getValueBoolean());
-        } else if(cellType.equals("formular")) {
-            return String.valueOf(getValueFormular());
+        } else if(cellType.equals("formula")) {
+            return String.valueOf(getValueFormula());
         } else if(cellType.equals("error")) {
             return String.valueOf(getValueError());
         } else if(cellType.equals("string")) {
@@ -289,11 +289,11 @@ public class ExcelCell {
         json.put("address", address);
         
         json.put("cellType", cellType);
-        json.put("cellTypeFormular", cellTypeFormular);
+        json.put("cellTypeFormula", cellTypeFormula);
         
         json.put("valueNumeric", valueNumeric);
         json.put("valueBoolean", valueBoolean);
-        json.put("valueFormular", valueFormular);
+        json.put("valueFormula", valueFormula);
         json.put("valueError", valueError);
         json.put("valueString", valueString);
         json.put("valueRichText", valueRichText);
@@ -303,7 +303,7 @@ public class ExcelCell {
     
     @Override
     public String toString() {
-        return "ExcelCell{ row=" + row + ", column=" + column + ", address=" + address + ", cellType=" + cellType + ", valueNumeric=" + valueNumeric + ", valueBoolean=" + valueBoolean + ", valueFormular=" + valueFormular + ", valueError=" + valueError + ", valueString=" + valueString + '}';
+        return "ExcelCell{ row=" + row + ", column=" + column + ", address=" + address + ", cellType=" + cellType + ", valueNumeric=" + valueNumeric + ", valueBoolean=" + valueBoolean + ", valueFormula=" + valueFormula + ", valueError=" + valueError + ", valueString=" + valueString + '}';
     }
     
 }

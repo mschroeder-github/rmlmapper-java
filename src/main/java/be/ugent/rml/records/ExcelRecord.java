@@ -1,5 +1,6 @@
 package be.ugent.rml.records;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class ExcelRecord extends Record {
         List<Object> objects = new ArrayList<>();
 
         ExcelCell currentCell = cell;
+        
+        
 
         //syntax proposal: "(-1,0).valueString", "valueString", "[A5].valueString"
         //[] = absolute
@@ -46,9 +49,27 @@ public class ExcelRecord extends Record {
                 
                 currentCell = cellMatrix[y][x];
             } else if(absolute) {
+                String[] posParts = left.split("\\,");
                 
-                //TODO use address here for absolute positioning
+                int x = currentCell.getColumn();
+                int y = currentCell.getRow();
                 
+                //the case "[0]" is x = 0
+                if(posParts.length == 1) {
+                    if(!posParts[0].trim().isEmpty()) {
+                        x = Integer.parseInt(posParts[0]);
+                    }
+                } else if(posParts.length == 2) {
+                    //the case [4,5] but also [,5]
+                    if(!posParts[0].trim().isEmpty()) {
+                        x = Integer.parseInt(posParts[0]);
+                    }
+                    if(!posParts[1].trim().isEmpty()) {
+                        y = Integer.parseInt(posParts[1]);
+                    }
+                }
+                
+                currentCell = cellMatrix[y][x];
             }
 
 
@@ -58,7 +79,7 @@ public class ExcelRecord extends Record {
         if (currentCell == null) {
             return objects;
         }
-
+        
         switch (value) {
             case "row":
                 objects.add(currentCell.getRow());
@@ -69,15 +90,47 @@ public class ExcelRecord extends Record {
             case "address":
                 objects.add(currentCell.getAddress());
                 break;
+                
+            case "backgroundColor":
+                Color bg = currentCell.getBackgroundColor();
+                if(bg != null) {
+                    objects.add(Integer.toHexString(bg.getRGB()).substring(2));
+                }
+                break;
+            case "foregroundColor":
+                Color fg = currentCell.getForegroundColor();
+                if(fg != null) {
+                    objects.add(Integer.toHexString(fg.getRGB()).substring(2));
+                }
+                break;
+                
+            case "fontColor":
+                Color fontColor = currentCell.getFontColor();
+                if(fontColor != null) {
+                    objects.add(Integer.toHexString(fontColor.getRGB()).substring(2));
+                }
+                break;
+            case "fontName":
+                String fontName = currentCell.getFontName();
+                if(fontName != null) {
+                    objects.add(fontName);
+                }
+                break;
+            case "fontSize":
+                objects.add(currentCell.getFontSize());
+                break;
 
             case "valueNumeric":
                 objects.add(currentCell.getValueNumeric());
                 break;
+            case "valueInt":
+                objects.add((int) currentCell.getValueNumeric());
+                break;
             case "valueBoolean":
                 objects.add(currentCell.getValueBoolean());
                 break;
-            case "valueFormular":
-                objects.add(currentCell.getValueFormular());
+            case "valueFormula":
+                objects.add(currentCell.getValueFormula());
                 break;
             case "valueError":
                 objects.add(currentCell.getValueError());
@@ -111,7 +164,7 @@ public class ExcelRecord extends Record {
         return cell;
     }
 
-    void setCell(ExcelCell cell) {
+    /*package*/ void setCell(ExcelCell cell) {
         this.cell = cell;
     }
 
